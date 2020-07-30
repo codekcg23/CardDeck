@@ -3,8 +3,8 @@ package controller;
 import models.Deck;
 import models.Player;
 import models.PlayingCard;
-import view.View;
 import game.GameEvaluator;
+import view.GameViewable;
 
 import java.util.ArrayList;
 
@@ -20,16 +20,18 @@ public class GameController {
     Deck deck;
     ArrayList<Player> players;
     Player winner;
-    View view;
+    GameViewable view;
     GameState gameState;
+    GameEvaluator gameEvaluator;
 
-    public GameController(View view,Deck deck){
+    public GameController(GameViewable view, Deck deck, GameEvaluator gameEvaluator){
 
         this.view = view;
         this.deck = deck;
         players = new ArrayList<>();
         gameState = GameState.AddingPlayers;
         view.setController(this);
+        this.gameEvaluator = gameEvaluator;  // pass in the correct specific implementation as that parameter. low or high
 
     }
 
@@ -80,10 +82,15 @@ public class GameController {
         rebuildDeck();
 
     }
+    public void restartGame(){
+        rebuildDeck();
+        gameState = GameState.AddingPlayers;
+
+    }
 
     void evaluateWinner() {
 
-        winner = new GameEvaluator().evaluateWinner(players);
+        winner = gameEvaluator.evaluateWinner(players);
 
     }
     void displayWinner() {

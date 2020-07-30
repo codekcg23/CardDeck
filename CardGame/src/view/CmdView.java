@@ -4,7 +4,7 @@ import controller.GameController;
 
 import java.util.Scanner;
 
-public class View {
+public class CmdView implements  GameViewable {
     GameController controller;
     Scanner keyboard = new Scanner((System.in));
 
