@@ -20,7 +20,7 @@ public enum Rank {
     private Rank(int value){
         rank = value;
     }
-    public int vaalue(){
+    public int value(){
         return rank;
     }
 

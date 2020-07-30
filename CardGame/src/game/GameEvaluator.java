@@ -1,8 +1,7 @@
 package game;
 import java.util.List;
-import models.Player;
-import models.PlayingCard;
+import models.IPlayer;
 
 public interface GameEvaluator {
-     Player evaluateWinner(List<Player> players) ;  // default public and abstract
+     IPlayer evaluateWinner(List<IPlayer> players) ;  // default public and abstract
 }

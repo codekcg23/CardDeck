@@ -1,10 +1,9 @@
 package controller;
 
-import models.Deck;
-import models.Player;
-import models.PlayingCard;
+import models.*;
 import game.GameEvaluator;
 import view.GameViewable;
+import view.GameViewables;
 
 import java.util.ArrayList;
 
@@ -14,38 +13,55 @@ public class GameController {
     enum GameState {
         AddingPlayers,
         CardDealt,
-        WinnerRevealed
+        WinnerRevealed,
+        AddingView
     }
 
     Deck deck;
-    ArrayList<Player> players;
-    Player winner;
-    GameViewable view;
+    ArrayList<IPlayer> players;
+    IPlayer winner;
+    GameViewables views;
     GameState gameState;
     GameEvaluator gameEvaluator;
 
     public GameController(GameViewable view, Deck deck, GameEvaluator gameEvaluator){
 
-        this.view = view;
+    //    this.view = view;
+        views = new GameViewables();
         this.deck = deck;
-        players = new ArrayList<>();
+        players = new ArrayList<IPlayer>();
         gameState = GameState.AddingPlayers;
         view.setController(this);
         this.gameEvaluator = gameEvaluator;  // pass in the correct specific implementation as that parameter. low or high
+        addViewable(view);
+    }
 
+    public  void  addViewable(GameViewable newView){
+        GameState currentState = gameState;
+        gameState = GameState.AddingView;
+        newView.setController(this);
+        views.addViewables(newView);
+        try{
+            Thread.sleep(1000);
+        }catch (InterruptedException e){
+            e.printStackTrace();
+        }
+        gameState = currentState;
     }
 
     public void run(){
         while (true){
             switch (gameState){
                 case AddingPlayers:
-                    view.promptForPlayerName();
+                    views.promptForPlayerName();
                     break;
                 case CardDealt:
-                    view.promptForFlip();
+                    views.promptForFlip();
                     break;
                 case WinnerRevealed:
-                    view.promptForNewGame();
+                    views.promptForNewGame();
+                    break;
+                case AddingView:
                     break;
             }
         }
@@ -55,26 +71,26 @@ public class GameController {
     public void addPlayer(String playerName) {
         if(gameState == GameState.AddingPlayers){
             players.add(new Player(playerName));
-            view.showPlayerName(players.size(),playerName);
+            views.showPlayerName(players.size(),playerName);
         }
     }
     public void startGame() {
         if(gameState != GameState.CardDealt){
             deck.shuffle();
             int playerIndex = 1;
-            for(Player player: players){
+            for(IPlayer player: players){
                 player.addCardToHand(deck.removeTopCard());
-                view.showFaceDownCardForPlayer(playerIndex++,player.getName());
+                views.showFaceDownCardForPlayer(playerIndex++,player.getName());
             }
             gameState = GameState.CardDealt;
         }
     }
     public void flipCards() {
         int playerIndex = 1;
-        for(Player player: players){
+        for(IPlayer player: players){
             PlayingCard pc = player.getCard(0);
             pc.flip();
-            view.showCardForPlayer(playerIndex++,player.getName(),pc.getRank().toString(),pc.getSuit().toString());
+            views.showCardForPlayer(playerIndex++,player.getName(),pc.getRank().toString(),pc.getSuit().toString());
         }
         gameState = GameState.WinnerRevealed;
         evaluateWinner();
@@ -90,15 +106,16 @@ public class GameController {
 
     void evaluateWinner() {
 
-        winner = gameEvaluator.evaluateWinner(players);
+        //  winner = gameEvaluator.evaluateWinner(players);      before decorater design pattern
+        winner = new WinnerPlayer(gameEvaluator.evaluateWinner(players));
 
     }
     void displayWinner() {
 
-        view.showWinner(winner.getName());
+        views.showWinner(winner.getName()); // decorated getName()
     }
     void rebuildDeck() {
-        for(Player player:players){
+        for(IPlayer player:players){
             deck.returnCardToDeck(player.removeCard());
         }
 

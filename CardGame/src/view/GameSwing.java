@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
 
 public class GameSwing implements GameViewable {
     GameController controller;
@@ -14,7 +15,7 @@ public class GameSwing implements GameViewable {
     JButton btnDealCards;
     JButton btnFindWinner;
     JTextArea textArea;
-    char nextPlayerName = 'A';
+    static char nextPlayerName = 'A';  // shared
 
     public void createAndShowGUI() {
         // create the main display area, with enough initial space
@@ -29,6 +30,7 @@ public class GameSwing implements GameViewable {
         addAddPlayerButton(contentPane);
         addDealCardsButton(contentPane);
         addFindWinnerButton(contentPane);
+        addNewWindow(contentPane);
 
         addControllerCommandTracker(contentPane);
 
@@ -38,14 +40,14 @@ public class GameSwing implements GameViewable {
     // when clicked, tell controller to add a player of the given name
     // this SHOULD bring up a dialog box to allow the user to enter a name
     // but that is beyond the scope of what we need to learn
-    // for simplicity, we'll just tell it to add "Player A", "Player B", etc.
+    // for simplicity, we'll just tell it to add "IPlayer A", "IPlayer B", etc.
     private void addAddPlayerButton (Container contentPane) {
-        btnAddPlayer = new JButton("Add A Player");
+        btnAddPlayer = new JButton("Add A IPlayer");
         addCenteredComponent (btnAddPlayer, contentPane);
         btnAddPlayer.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 textArea.append("Current players:\n");
-                controller.addPlayer("Player " + nextPlayerName++);
+                controller.addPlayer("IPlayer " + nextPlayerName++);
             }
         });
     }
@@ -92,6 +94,20 @@ public class GameSwing implements GameViewable {
         textArea.setCaretPosition(textArea.getDocument().getLength());
     }
 
+    // add new windows
+    private void addNewWindow(Container contentPane){
+        JButton btnAddWindow = new JButton("Add Window");
+        addCenteredComponent (btnAddWindow, contentPane);
+        btnAddWindow.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                GameSwing game = new GameSwing();
+                game.createAndShowGUI();
+                controller.addViewable(game);
+            }
+        });
+    }
+
+
     // all controls are added so they are centered horizontally in the area
     private void addCenteredComponent(JComponent component, Container contentPane) {
         component.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -128,7 +144,7 @@ public class GameSwing implements GameViewable {
 
     @Override
     public void promptForPlayerName() {
-      //  System.out.println("Enter Player Name:");
+      //  System.out.println("Enter IPlayer Name:");
         // it's ok to add names
         btnAddPlayer.setEnabled(true);
 

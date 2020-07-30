@@ -5,20 +5,10 @@ import java.util.Collections;
 import java.util.Random;
 
 
-public class Deck {
+public abstract class Deck {
 
     ArrayList<PlayingCard> cards;
 
-    public Deck(){
-        cards = new ArrayList<PlayingCard>();
-        for(Rank rank:Rank.values()){
-            for(Suit suit :Suit.values()){
-                System.out.println("Creating card:{" + rank + "]");
-                cards.add(new PlayingCard(rank,suit));
-            }
-        }
-        shuffle();
-    }
 
     public  void  shuffle(){
         Random random = new Random();

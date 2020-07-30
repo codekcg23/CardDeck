@@ -12,7 +12,7 @@ public class CmdView implements  GameViewable {
         this.controller = controller;
     };
     public void promptForPlayerName(){
-        System.out.println("Enter Player name \nAfter adding players press enter to start game ");
+        System.out.println("Enter IPlayer name \nAfter adding players press enter to start game ");
         String name = keyboard.nextLine();
         if(name.isEmpty()){
             controller.startGame();

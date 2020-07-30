@@ -17,7 +17,7 @@ public class CardGame {
         gs.createAndShowGUI();
 
         // cmd GUI
-        CmdView cv = new CmdView();
+      //  CmdView cv = new CmdView();
 
         // JavaFX GUI
 
@@ -27,7 +27,8 @@ public class CardGame {
         // Lowest card player winner
         LowCardGameEvaluator le = new LowCardGameEvaluator();
 
-        GameController gc = new GameController(gs,new Deck(),he);
+        //GameController gc = new GameController(gs,new Deck(),he);
+        GameController gc = new GameController(gs,DeckFactory.makeDeck(DeckFactory.DeckType.Normal),he);   // use DeckFactory to create our objects
         gc.run();
 
     }
